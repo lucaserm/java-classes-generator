@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
@@ -76,9 +77,7 @@ async function runGenerator() {
       )
       .trim() || defaultOutputPath;
 
-  // ? Normalize path to ensure consistency across different operating systems.
   outputBasePath = path.normalize(outputBasePath);
-  // ! Ensure it ends with a path separator for consistent directory creation.
   if (!outputBasePath.endsWith(path.sep)) {
     outputBasePath += path.sep;
   }
@@ -92,8 +91,6 @@ async function runGenerator() {
       )
       .trim() || "com.example"; // Default base package
 
-  // ! Validate base package name to ensure it's a valid Java package structure.
-  // ? This regex allows for multiple segments separated by dots.
   if (!/^[a-z]+(\.[a-z]+)*$/.test(basePackageName)) {
     log(
       chalk.red(
@@ -122,21 +119,18 @@ async function runGenerator() {
   }
 
   const uncapitalizedEntityName = uncapitalize(entityName);
-  // ! Construct package name using dot notation for Java.
   const entityPackage = `${basePackageName}.${uncapitalizedEntityName}`;
 
   const fields = [
     {
       name: "id",
-      type: "String", // ? Consider making 'id' type configurable (e.g., Long, UUID)
+      type: "String",
       isId: true,
       isRequired: false,
       includeInDto: true,
     },
   ];
 
-  // * Use a Set for faster lookups and better readability for valid types.
-  // ! Added BigDecimal for precise monetary values.
   const VALID_FIELD_TYPES = new Set([
     "String",
     "int",
@@ -149,7 +143,6 @@ async function runGenerator() {
     "UUID",
     "Double",
     "Float",
-    "BigDecimal", // ? Added BigDecimal for precise monetary values
   ]);
 
   while (true) {
@@ -221,13 +214,13 @@ async function runGenerator() {
   const templateData = {
     entityName: _.capitalize(entityName),
     uncapitalizedEntityName,
-    packageName: entityPackage, // Now in dot notation (e.g., com.example.post)
+    packageName: entityPackage,
     fields,
     fieldsForDto: fields.filter((f) => f.includeInDto && !f.isId),
     hasRequiredFieldInDto: fields.some(
       (f) => f.includeInDto && f.isRequired && !f.isId
     ),
-    basePackage: basePackageName, // Added for potential use in templates
+    basePackage: basePackageName,
   };
 
   try {
