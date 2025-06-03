@@ -235,8 +235,7 @@ async function runGenerator() {
     await generateComponent(
       outputBasePath,
       "Entity.js.hbs",
-      // ! Convert package name (dot notation) to path (slash notation) for directories
-      templateData.packageName.replace(/\./g, path.sep),
+      `${templateData.packageName.replace(/\./g, path.sep)}${path.sep}entity`,
       `${templateData.entityName}.java`,
       templateData
     );
@@ -247,6 +246,15 @@ async function runGenerator() {
       "DTO.js.hbs",
       `${templateData.packageName.replace(/\./g, path.sep)}${path.sep}dto`,
       `${templateData.entityName}DTO.java`,
+      templateData
+    );
+
+    log(chalk.magenta("⚙️ Generating mapper..."));
+    await generateComponent(
+      outputBasePath,
+      "Mapper.js.hbs",
+      `${templateData.packageName.replace(/\./g, path.sep)}${path.sep}mapper`,
+      `${templateData.entityName}Mapper.java`,
       templateData
     );
 

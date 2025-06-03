@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/{{uncapitalizedEntityName}}s")
@@ -16,33 +18,32 @@ public class {{entityName}}Controller {
     private final {{entityName}}Service {{uncapitalizedEntityName}}Service;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public {{entityName}}DTO create{{entityName}}(@Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
-        return {{uncapitalizedEntityName}}Service.save({{uncapitalizedEntityName}}DTO);
+    public ResponseEntity<{{entityName}}DTO> create{{entityName}}(@Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
+        var {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Service.save({{uncapitalizedEntityName}}DTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body({{uncapitalizedEntityName}});
     }
 
     @GetMapping
-    public {{entityName}}DTO getAll{{entityName}}s() {
-        return {{uncapitalizedEntityName}}Service.findAll();
+    public ResponseEntity<List<{{entityName}}DTO>> getAll{{entityName}}s() {
+        var {{uncapitalizedEntityName}}s = {{uncapitalizedEntityName}}Service.findAll();
+        return ResponseEntity.ok().body({{uncapitalizedEntityName}}s);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<{{entityName}}DTO> get{{entityName}}ById(@PathVariable String id) {
-        return {{uncapitalizedEntityName}}Service.findById(id)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        var {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Service.findById(id);
+        return ResponseEntity.ok().body({{uncapitalizedEntityName}});
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<{{entityName}}DTO> update{{entityName}}(@PathVariable String id, @Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
-        return {{uncapitalizedEntityName}}Service.update(id, {{uncapitalizedEntityName}}DTO)
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        var {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Service.update(id, {{uncapitalizedEntityName}}DTO);
+        return ResponseEntity.ok().body({{uncapitalizedEntityName}});
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void delete{{entityName}}(@PathVariable String id) {
-        return {{uncapitalizedEntityName}}Service.delete(id);
+    public ResponseEntity<Void> delete{{entityName}}(@PathVariable String id) {
+        {{uncapitalizedEntityName}}Service.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

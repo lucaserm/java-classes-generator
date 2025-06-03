@@ -1,0 +1,27 @@
+
+import {{packageName}}.entity.{{entityName}};
+import {{packageName}}.dto.{{entityName}}DTO;
+import org.springframework.stereotype.Service;
+
+@Service
+public class {{entityName}}Mapper {
+  public {{entityName}}DTO convertToDto({{entityName}} entity) {
+    return {{entityName}}DTO.builder()
+    {{#each fields}}
+        {{#if this.includeInDto}}
+            .{{this.name}}(entity.get{{capitalize this.name}}())
+        {{/if}}
+    {{/each}}
+            .build();
+  }
+
+  public {{entityName}} convertToEntity({{entityName}}DTO dto) {
+    return {{entityName}}.builder()
+    {{#each fields}}
+        {{#if (and this.includeInDto (not this.isId))}} 
+            .{{this.name}}(dto.get{{capitalize this.name}}())
+        {{/if}}
+    {{/each}}
+            .build();
+  }
+}

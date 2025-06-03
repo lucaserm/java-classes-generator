@@ -1,72 +1,60 @@
 package {{packageName}}.service;
 
-import {{packageName}}.{{entityName}};
+import {{packageName}}.entity.{{entityName}};
 import {{packageName}}.dto.{{entityName}}DTO;
+import {{packageName}}.mapper.{{entityName}}Mapper;
 import {{packageName}}.repository.{{entityName}}Repository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class {{entityName}}Service {
 
     private final {{entityName}}Repository {{uncapitalizedEntityName}}Repository;
+    private final {{entityName}}Mapper {{uncapitalizedEntityName}}Mapper;
 
     public {{entityName}}DTO save(@Valid {{entityName}}DTO dto) {
-        {{entityName}} entity = convertToEntity(dto);
-        return {{uncapitalizedEntityName}}Repository.save(entity)
-                .map(this::convertToDto);
+        {{entityName}} entity = {{uncapitalizedEntityName}}Mapper.convertToEntity(dto);
+        entity = {{uncapitalizedEntityName}}Repository.save(entity);
+        return {{uncapitalizedEntityName}}Mapper.convertToDto(entity);
     }
 
-    public {{entityName}}DTO findAll() {
-        return {{uncapitalizedEntityName}}Repository.findAll()
-                .map(this::convertToDto);
+    public List<{{entityName}}DTO> findAll() {
+        return {{uncapitalizedEntityName}}Repository.findAll().stream()
+                .map({{uncapitalizedEntityName}}Mapper::convertToDto)
+                .toList();
     }
 
     public {{entityName}}DTO findById(String id) {
-        return {{uncapitalizedEntityName}}Repository.findById(id)
-                .map(this::convertToDto);
+        Optional<{{entityName}}> {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.findById(id);
+        return {{uncapitalizedEntityName}}
+                .map({{uncapitalizedEntityName}}Mapper::convertToDto)
+                .orElse(null);
     }
 
     public {{entityName}}DTO update(String id, @Valid {{entityName}}DTO dto) {
-        {{entityName}} {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.findById(id);
+        Optional<{{entityName}}> {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.findById(id);
+        {{entityName}} finalEntity;
+        if ({{uncapitalizedEntityName}}.isEmpty()) {
+            return null;
+        }
+        finalEntity = {{uncapitalizedEntityName}}.get();
         {{#each fields}}
-            {{#if this.includeInDto}}
-                {{uncapitalizedEntityName}}.set{{capitalize this.name}}(dto.get{{capitalize this.name}}());
-            {{/if}}
+        {{#if (and this.includeInDto (not this.isId))}}
+        finalEntity.set{{capitalize this.name}}(dto.get{{capitalize this.name}}());
+        {{/if}}
         {{/each}}
-        {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.save({{uncapitalizedEntityName}});
-        return convertToDto({{uncapitalizedEntityName}});
+        finalEntity = {{uncapitalizedEntityName}}Repository.save(finalEntity);
+        
+        return {{uncapitalizedEntityName}}Mapper.convertToDto(finalEntity);
     }
 
     public void delete(String id) {
         {{uncapitalizedEntityName}}Repository.deleteById(id);
-    }
-
-    private {{entityName}}DTO convertToDto({{entityName}} entity) {
-        {{entityName}}DTO dto = {{entityName}}DTO.builder()
-        {{#each fields}}
-            {{#if this.includeInDto}}
-                .{{this.name}}(entity.get{{capitalize this.name}}());
-            {{/if}}
-        {{/each}}
-                .build();
-    
-        return dto;
-    }
-
-    private {{entityName}} convertToEntity({{entityName}}DTO dto) {
-        {{entityName}} entity = {{entityName}}.builder()
-        {{#each fields}}
-            {{#if (and this.includeInDto (not this.isId))}} 
-                .{{this.name}}(dto.get{{capitalize this.name}}());
-            {{/if}}
-        {{/each}}
-                .build();
-    
-        return entity;
     }
 }

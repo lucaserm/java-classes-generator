@@ -1,6 +1,6 @@
 {
   "name": "java-classes-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gerador de componentes Spring Boot com Node.js",
   "main": "src/generator.js",
   "repository": "https://github.com/lucaserm/java-classes-generator",
