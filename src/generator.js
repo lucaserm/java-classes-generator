@@ -307,7 +307,7 @@ async function runGenerator() {
       );
       log(
         chalk.greenBright("⭐ Star on GitHub: ") +
-          chalk.blueBright("https://github.com/lucaserm/seu-repositorio")
+          chalk.blueBright("https://github.com/lucaserm/java-classes-generator")
       );
       log(
         chalk.greenBright("💰 Donate via Pix: ") +
