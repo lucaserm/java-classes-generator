@@ -5,8 +5,6 @@ import {{packageName}}.service.{{entityName}}Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -19,24 +17,24 @@ public class {{entityName}}Controller {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<{{entityName}}DTO> create{{entityName}}(@Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
+    public {{entityName}}DTO create{{entityName}}(@Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
         return {{uncapitalizedEntityName}}Service.save({{uncapitalizedEntityName}}DTO);
     }
 
     @GetMapping
-    public Flux<{{entityName}}DTO> getAll{{entityName}}s() {
+    public {{entityName}}DTO getAll{{entityName}}s() {
         return {{uncapitalizedEntityName}}Service.findAll();
     }
 
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<{{entityName}}DTO>> get{{entityName}}ById(@PathVariable String id) {
+    public ResponseEntity<{{entityName}}DTO> get{{entityName}}ById(@PathVariable String id) {
         return {{uncapitalizedEntityName}}Service.findById(id)
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<{{entityName}}DTO>> update{{entityName}}(@PathVariable String id, @Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
+    public ResponseEntity<{{entityName}}DTO> update{{entityName}}(@PathVariable String id, @Valid @RequestBody {{entityName}}DTO {{uncapitalizedEntityName}}DTO) {
         return {{uncapitalizedEntityName}}Service.update(id, {{uncapitalizedEntityName}}DTO)
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -44,10 +42,7 @@ public class {{entityName}}Controller {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> delete{{entityName}}(@PathVariable String id) {
-        return {{uncapitalizedEntityName}}Service.delete(id)
-                .filter(Boolean::valueOf)
-                .switchIfEmpty(Mono.error(new RuntimeException("Entidade não encontrada ou não foi possível excluir.")))
-                .then();
+    public Void delete{{entityName}}(@PathVariable String id) {
+        return {{uncapitalizedEntityName}}Service.delete(id);
     }
 }

@@ -9,7 +9,6 @@ import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-
 @AllArgsConstructor
 @Service
 public class {{entityName}}Service {
@@ -38,8 +37,8 @@ public class {{entityName}}Service {
             {{#if this.includeInDto}}
                 {{uncapitalizedEntityName}}.set{{capitalize this.name}}(dto.get{{capitalize this.name}}());
             {{/if}}
-            {{/each}}
-        {{uncapitalizedEntityName}}Repository.save({{uncapitalizedEntityName}});
+        {{/each}}
+        {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.save({{uncapitalizedEntityName}});
         return convertToDto({{uncapitalizedEntityName}});
     }
 

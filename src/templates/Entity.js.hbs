@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-
 {{#each fields}}
   {{#if (or (eq this.type "LocalDate") (eq this.type "LocalDateTime"))}}
 import java.time.{{this.type}};
