@@ -1,0 +1,73 @@
+package {{packageName}}.service;
+
+import {{packageName}}.{{entityName}};
+import {{packageName}}.dto.{{entityName}}DTO;
+import {{packageName}}.repository.{{entityName}}Repository;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
+
+@AllArgsConstructor
+@Service
+public class {{entityName}}Service {
+
+    private final {{entityName}}Repository {{uncapitalizedEntityName}}Repository;
+
+    public {{entityName}}DTO save(@Valid {{entityName}}DTO dto) {
+        {{entityName}} entity = convertToEntity(dto);
+        return {{uncapitalizedEntityName}}Repository.save(entity)
+                .map(this::convertToDto);
+    }
+
+    public {{entityName}}DTO findAll() {
+        return {{uncapitalizedEntityName}}Repository.findAll()
+                .map(this::convertToDto);
+    }
+
+    public {{entityName}}DTO findById(String id) {
+        return {{uncapitalizedEntityName}}Repository.findById(id)
+                .map(this::convertToDto);
+    }
+
+    public {{entityName}}DTO update(String id, @Valid {{entityName}}DTO dto) {
+        {{entityName}} {{uncapitalizedEntityName}} = {{uncapitalizedEntityName}}Repository.findById(id);
+        {{#each fields}}
+            {{#if this.includeInDto}}
+                {{uncapitalizedEntityName}}.set{{capitalize this.name}}(dto.get{{capitalize this.name}}());
+            {{/if}}
+            {{/each}}
+        {{uncapitalizedEntityName}}Repository.save({{uncapitalizedEntityName}});
+        return convertToDto({{uncapitalizedEntityName}});
+    }
+
+    public void delete(String id) {
+        {{uncapitalizedEntityName}}Repository.deleteById(id);
+    }
+
+    private {{entityName}}DTO convertToDto({{entityName}} entity) {
+        {{entityName}}DTO dto = {{entityName}}DTO.builder()
+        {{#each fields}}
+            {{#if this.includeInDto}}
+                .{{this.name}}(entity.get{{capitalize this.name}}());
+            {{/if}}
+        {{/each}}
+                .build();
+    
+        return dto;
+    }
+
+    private {{entityName}} convertToEntity({{entityName}}DTO dto) {
+        {{entityName}} entity = {{entityName}}.builder()
+        {{#each fields}}
+            {{#if (and this.includeInDto (not this.isId))}} 
+                .{{this.name}}(dto.get{{capitalize this.name}}());
+            {{/if}}
+        {{/each}}
+                .build();
+    
+        return entity;
+    }
+}

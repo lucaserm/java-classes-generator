@@ -1,0 +1,23 @@
+{
+  "name": "java-classes-generator",
+  "version": "1.0.0",
+  "description": "Gerador de componentes Spring Boot com Node.js",
+  "main": "src/generator.js",
+  "scripts": {
+    "generate": "node src/generator.js"
+  },
+  "keywords": [
+    "java",
+    "spring-boot",
+    "generator",
+    "cli"
+  ],
+  "author": "kiaz",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "handlebars": "^4.7.8",
+    "lodash": "^4.17.21",
+    "readline-sync": "^1.4.10"
+  }
+}

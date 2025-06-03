@@ -1,0 +1,13 @@
+package {{packageName}}.repository;
+
+import {{packageName}}.{{entityName}};
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+import io.swagger.v3.oas.annotations.Hidden;
+
+@Hidden
+@Repository
+public interface {{entityName}}Repository extends MongoRepository<{{entityName}}, String> {
+    // Você pode adicionar métodos de consulta personalizados aqui, se precisar
+    // Ex: Mono<{{entityName}}> findByName(String name);
+}

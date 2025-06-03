@@ -1,0 +1,63 @@
+package {{packageName}}.dto;
+
+import java.io.Serializable;
+import java.util.Objects;
+{{#each fields}}
+  {{#if (or (eq this.type "LocalDate") (eq this.type "LocalDateTime") (eq this.type "Date") (eq this.type "Instant"))}}
+import java.time.{{this.type}};
+  {{/if}}
+{{/each}}
+{{#if hasRequiredFieldInDto}}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+{{/if}}
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class {{entityName}}DTO implements Serializable {
+
+{{#each fields}}
+  {{#if this.includeInDto}}
+    {{#if this.isRequired}}
+      {{#if (eq this.type "String")}}
+    @NotBlank(message = "{{capitalize this.name}} cannot be blank")
+      {{else}}
+    @NotNull(message = "{{capitalize this.name}} cannot be null")
+      {{/if}}
+    {{/if}}
+    private {{this.type}} {{this.name}};
+  {{/if}}
+{{/each}}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        {{entityName}}DTO that = ({{entityName}}DTO) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "{{entityName}}DTO{" +
+               "id='" + id + '\''
+    {{#each fields}}
+      {{#if (and this.includeInDto (ne this.name "id"))}}
+               + ", {{this.name}}='" + {{this.name}} + '\''
+      {{/if}}
+    {{/each}}
+               + '}';
+    }
+}
